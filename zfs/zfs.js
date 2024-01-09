@@ -690,7 +690,7 @@ function FnConfigureFinally(modal = { name, welcome: false }) {
 
 function FnConfigurationDirectoryCreate() {
     let process = {
-        command: ["/bin/sh", "-c", `[ ! -d /etc/cockpit/zfs ] || [ ! -d /etc/cockpit/zfs/shares ] || [ ! -d /etc/cockpit/zfs/snapshots ] && /bin/mkdir -p /etc/cockpit/zfs/shares /etc/cockpit/zfs/snapshots || printf "Skipped"`]
+        command: ["/bin/sh", "-c", `[ ! -d /etc/cockpit/zfs ] || [ ! -d /etc/cockpit/zfs/shares ] || [ ! -d /etc/cockpit/zfs/snapshots ] && mkdir -p /etc/cockpit/zfs/shares /etc/cockpit/zfs/snapshots || printf "Skipped"`]
     };
 
     FnConsole.log[2]("Cockpit ZFS Manager, Configuration Directory, Create: In Progress");
@@ -713,7 +713,7 @@ function FnConfigurationDirectoryCreate() {
 
 function FnConfigurationDirectoryRuntimeCreate() {
     let process = {
-        command: ["/bin/sh", "-c", `[ ! -d /run/cockpit/zfs/shares ] && /bin/mkdir -p /run/cockpit/zfs/shares || printf "Skipped"`]
+        command: ["/bin/sh", "-c", `[ ! -d /run/cockpit/zfs/shares ] && mkdir -p /run/cockpit/zfs/shares || printf "Skipped"`]
     };
 
     FnConsole.log[2]("Cockpit ZFS Manager, Runtime Configuration Directory, Create: In Progress");
@@ -803,7 +803,7 @@ function FnConfigurationLegacyGet() {
 
 function FnConfigurationLegacyRelocate(legacy = { path }) {
     let process = {
-        command: ["/bin/sh", "-c", `/bin/mv -f ` + legacy.path + `/config.json /etc/cockpit/zfs/config.json`]
+        command: ["/bin/sh", "-c", `mv -f ` + legacy.path + `/config.json /etc/cockpit/zfs/config.json`]
     };
 
     FnConsole.log[2]("Cockpit ZFS Manager, Configuration, Legacy, Relocate: In Progress");
@@ -928,7 +928,7 @@ function FnCockpitManage() {
 
 function FnCockpitPackagePathGet(package = { sosreport: false }) {
     let process = {
-        command: ["/bin/sh", "-c", `cockpit-bridge --packages | /bin/grep -m1 '/cockpit/` + (package.sosreport ? `sosreport` : `zfs`) + `$' || printf "false"`] //printf fix for Debian
+        command: ["/bin/sh", "-c", `cockpit-bridge --packages | grep -m1 '/cockpit/` + (package.sosreport ? `sosreport` : `zfs`) + `$' || printf "false"`] //printf fix for Debian
     };
 
     FnConsole.log[2]("Cockpit, " + (package.sosreport ? "SOS Report" : "Cockpit ZFS Manager") + " Package Path, Get: In Progress");
@@ -960,7 +960,7 @@ function FnCockpitPackageSosReportDelete() {
                 path = "/usr/share/cockpit/sosreport"
             }
 
-            process.command.push(`[ -e '` + path + `' ] && /bin/rm -rf ` + path + ` || printf "Skipped"`);
+            process.command.push(`[ -e '` + path + `' ] && rm -rf ` + path + ` || printf "Skipped"`);
 
             FnConsole.log[2]("Cockpit, Package, SOS Report, Delete: In Progress");
             FnConsole.log[3](FnConsoleCommand({ command: process.command }));
@@ -1032,7 +1032,7 @@ function FnZfsVersionCompare(version = { installed, threshold }) {
 
 function FnZfsVersionGet() {
     let process = {
-        command: ["/bin/cat", "/sys/module/zfs/version"]
+        command: ["/usr/bin/env", "cat", "/sys/module/zfs/version"]
     };
     let zfs = {
         success: false,
@@ -1532,7 +1532,7 @@ function FnStoragePoolsGetCommand(process = { data, message }) {
 
 function FnStoragePoolsImportableBlockDeviceGet(pools = { destroyed: false }) {
     let process = {
-        command: ["/bin/sh", "-c", "/sbin/zpool import -d /dev" + (pools.destroyed ? " -D" : "") + " 2> /dev/null | /bin/grep -E 'pool:\| id:\|state:'  | tr '\\\n' ','"]
+        command: ["/bin/sh", "-c", "/sbin/zpool import -d /dev" + (pools.destroyed ? " -D" : "") + " 2> /dev/null | grep -E 'pool:\| id:\|state:'  | tr '\\\n' ','"]
     };
 
     FnConsole.log[2]("Storage Pools, Importable, Block Device, Get: In Progress");
@@ -1549,7 +1549,7 @@ function FnStoragePoolsImportableBlockDeviceGet(pools = { destroyed: false }) {
 
 function FnStoragePoolsImportableDiskGet(pools = { destroyed: false }) {
     let process = {
-        command: ["/bin/sh", "-c", "/sbin/zpool import -d /dev/disk/by-id" + (pools.destroyed ? " -D" : "") + " 2> /dev/null | /bin/grep -E 'pool:\| id:\|state:'  | tr '\\\n' ','"]
+        command: ["/bin/sh", "-c", "/sbin/zpool import -d /dev/disk/by-id" + (pools.destroyed ? " -D" : "") + " 2> /dev/null | grep -E 'pool:\| id:\|state:'  | tr '\\\n' ','"]
     };
 
     FnConsole.log[2]("Storage Pools, Importable, Disk / WWN, Get: In Progress");
@@ -1742,7 +1742,7 @@ function FnStoragePoolsImportableGetFail(pools = { destroyed: false }) {
 
 function FnStoragePoolsImportableHardwarePathGet(pools = { destroyed: false }) {
     let process = {
-        command: ["/bin/sh", "-c", "/sbin/zpool import", "-d", "/dev/disk/by-path", (pools.destroyed ? " -D" : ""), " 2> /dev/null | /bin/grep -E 'pool:\| id:\|state:'  | tr '\\\n' ','" ]
+        command: ["/bin/sh", "-c", "/sbin/zpool import", "-d", "/dev/disk/by-path", (pools.destroyed ? " -D" : ""), " 2> /dev/null | grep -E 'pool:\| id:\|state:'  | tr '\\\n' ','" ]
     };
 
     FnConsole.log[2]("Storage Pools, Importable, Hardware Path, Get: In Progress");
@@ -1759,7 +1759,7 @@ function FnStoragePoolsImportableHardwarePathGet(pools = { destroyed: false }) {
 
 function FnStoragePoolsImportableVirtualDeviceMappingGet(pools = { destroyed: false }) {
     let process = {
-        command: ["/bin/sh", "-c", "/sbin/zpool import", "-d", "/dev/disk/by-vdev", (pools.destroyed ? " -D" : ""), "2> /dev/null | /bin/grep -E 'pool:\| id:\|state:'  | tr '\\\n' ','"]
+        command: ["/bin/sh", "-c", "/sbin/zpool import", "-d", "/dev/disk/by-vdev", (pools.destroyed ? " -D" : ""), "2> /dev/null | grep -E 'pool:\| id:\|state:'  | tr '\\\n' ','"]
     };
 
     FnConsole.log[2]("Storage Pools, Importable, Virtual Device Mapping, Get: In Progress");
@@ -9403,7 +9403,7 @@ function FnSnapshotCreate(pool = { name, id }, snapshot = { name, id, recursive:
 
 function FnSnapshotCreateDateGet(pool = { name, id }, snapshot = { name, id, recursive: false }, modal = { name, id }) {
     let process = {
-        command: ["/bin/date", "\+\%Y.\%m.\%d-\%H.\%M.\%S"]
+        command: ["/usr/bin/env", "date", "\+\%Y.\%m.\%d-\%H.\%M.\%S"]
     };
 
     snapshot.date = "";
@@ -10757,7 +10757,7 @@ function FnStatusGetFail(pool = { name, id, status: { empty: true } }) {
 
 function FnSystemHostIdGet(modal = { name, id }) {
     let process = {
-        command: ["/bin/sh", "-c", "/bin/cat /etc/hostid 2> /dev/null && echo response true || echo response false"]
+        command: ["/bin/sh", "-c", "/usr/bin/env cat /etc/hostid 2> /dev/null && echo response true || echo response false"]
     };
 
     FnConsole.log[2]("System, Host ID, Get: In Progress");
@@ -10839,7 +10839,7 @@ function FnSystemNfsVersionGet(modal = { alert: { id } }) {
 
 function FnSystemOperatingSystemGet() {
     let process = {
-        command: ["/bin/sh", "-c", "/usr/bin/hostnamectl status | /bin/grep 'Operating System'"]
+        command: ["/bin/sh", "-c", "hostnamectl status | grep 'Operating System'"]
     };
 
     FnConsole.log[2]("System, Operating System, Get: In Progress");
@@ -11312,7 +11312,7 @@ function FnDisksAvailableGetFail(modal = { name, id }, process = { data, message
 
 function FnDisksBlkidGet() {
     let process = {
-        command: ["/bin/sh", "-c", "/sbin/blkid -o full | /bin/grep -E '/dev/nvme\|/dev/sd'"]
+        command: ["/bin/sh", "-c", "blkid -o full | grep -E '/dev/nvme\|/dev/sd'"]
     };
 
     FnConsole.log[2]("Disks, Blkid, Get: In Progress");
@@ -11380,7 +11380,7 @@ function FnDisksIdentifierVirtualDeviceMappingGet() {
 
 function FnDisksLsblkGet(disks = { sizeraw: true }) {
     let process = {
-        command: ["/bin/sh", "-c", "/bin/lsblk -o label,model,mountpoint,name,partuuid,phy-sec,rota,serial,size,type,uuid,vendor,wwn -J" + (disks.sizeraw ? " -b" : "")]
+        command: ["/bin/sh", "-c", "lsblk -o label,model,mountpoint,name,partuuid,phy-sec,rota,serial,size,type,uuid,vendor,wwn -J" + (disks.sizeraw ? " -b" : "")]
     };
 
     FnConsole.log[2]("Disks, Lsblk, Get: In Progress");
@@ -11431,7 +11431,7 @@ function FnDisksStoragePoolsImportableAttachedGet() {
 
 function FnDisksStoragePoolsImportableGet() {
     let process = {
-        command: ["/bin/sh", "-c", "/sbin/zpool import | /bin/grep -E 'pool:\| id:'  | tr '\\\n' ','"]
+        command: ["/bin/sh", "-c", "zpool import | grep -E 'pool:\| id:'  | tr '\\\n' ','"]
     };
 
     FnConsole.log[2]("Disks, Importable Storage Pools, Get: In Progress");
@@ -11471,7 +11471,7 @@ function FnSambaConfigurationReload() {
 
 function FnSambaConfigurationZfsSharesEnable() {
     let process = {
-        command: ["/bin/sh", "-c", `[ -s /etc/samba/smb.conf ] && /usr/bin/awk -v k='\n\t# COCKPIT ZFS MANAGER\n\t# WARNING: DO NOT EDIT, AUTO-GENERATED CONFIGURATION\n\tinclude = /etc/cockpit/zfs/shares.conf\n' '($1=="[global]"||x&&/^\\[/)&&!(x=!x){print k} END{if(x)print k}1' /etc/samba/smb.conf > /etc/samba/smb.tmp && /bin/mv -f /etc/samba/smb.tmp /etc/samba/smb.conf \|\| { echo '/etc/samba/smb.conf file does not exist or is empty.' ; exit 1; }`]
+        command: ["/bin/sh", "-c", `[ -s /etc/samba/smb.conf ] && /usr/bin/env awk -v k='\n\t# COCKPIT ZFS MANAGER\n\t# WARNING: DO NOT EDIT, AUTO-GENERATED CONFIGURATION\n\tinclude = /etc/cockpit/zfs/shares.conf\n' '($1=="[global]"||x&&/^\\[/)&&!(x=!x){print k} END{if(x)print k}1' /etc/samba/smb.conf > /etc/samba/smb.tmp && /usr/bin/env mv -f /etc/samba/smb.tmp /etc/samba/smb.conf \|\| { echo '/etc/samba/smb.conf file does not exist or is empty.' ; exit 1; }`]
     };
 
     FnConsole.log[2]("Samba, Configuration, ZFS Shares, Enable: In Progress");
@@ -11490,7 +11490,7 @@ function FnSambaConfigurationZfsSharesEnable() {
 
 function FnSambaConfigurationZfsSharesGet() {
     let process = {
-        command: ["/bin/sh", "-c", "/bin/grep -Pzoq '(?s)include = /etc/cockpit/zfs/shares.conf' /etc/samba/smb.conf && echo true || echo false"]
+        command: ["/bin/sh", "-c", "grep -Pzoq '(?s)include = /etc/cockpit/zfs/shares.conf' /etc/samba/smb.conf && echo true || echo false"]
     };
 
     FnConsole.log[2]("Samba, Configuration, ZFS Shares, Get: In Progress");
@@ -11523,7 +11523,7 @@ function FnSambaManage() {
 
 function FnSambaRestart() {
     let process = {
-        command: ["/bin/systemctl", "restart"]
+        command: ["systemctl", "restart"]
     };
 
     if (/Debian|Ubuntu/i.test(zfsmanager.system.operatingsystem)) {
@@ -11856,7 +11856,7 @@ function FnSambaShareEnableMountpointGet(pool = { name, id, altroot: false, read
 
 function FnSambaShareNamesGet(samba = { zfsonly: false }) {
     let process = {
-        command: ["/bin/sh", "-c", `/bin/cat /etc/cockpit/zfs/shares/*.conf ` + (!samba.zfsonly ? `/etc/samba/smb.conf ` : ``) + `2> /dev/null | /bin/grep "^\\\[.*\\\]$" || echo \\\$empty`]
+        command: ["/bin/sh", "-c", `cat /etc/cockpit/zfs/shares/*.conf ` + (!samba.zfsonly ? `/etc/samba/smb.conf ` : ``) + `2> /dev/null | grep "^\\\[.*\\\]$" || echo \\\$empty`]
     };
 
     FnConsole.log[2]("Samba, Share, Names, Get: In Progress");
@@ -11945,7 +11945,7 @@ function FnSambaSharesDestroy(pool = { name, id, altroot: false, readonly: false
 
 function FnSambaSharesDestroyAll(samba = { restart: false }, display = { silent: false }, modal = { name }) {
     let process = {
-        command: ["/bin/sh", "-c", "echo '# COCKPIT ZFS MANAGER\n# WARNING: DO NOT EDIT, AUTO-GENERATED CONFIGURATION' > /etc/cockpit/zfs/shares.conf  && /bin/rm -rf /etc/cockpit/zfs/shares/*.conf "],
+        command: ["/bin/sh", "-c", "echo '# COCKPIT ZFS MANAGER\n# WARNING: DO NOT EDIT, AUTO-GENERATED CONFIGURATION' > /etc/cockpit/zfs/shares.conf  && rm -rf /etc/cockpit/zfs/shares/*.conf "],
         promise: cockpit.defer()
     };
 
@@ -12338,7 +12338,7 @@ function FnSambaSharesRename(pool = { name, id, altroot: false, readonly: false 
 
 function FnSambaStart() {
     let process = {
-        command: ["/bin/systemctl", "start"]
+        command: ["systemctl", "start"]
     };
 
     if (/Debian|Ubuntu/i.test(zfsmanager.system.operatingsystem)) {
@@ -12361,7 +12361,7 @@ function FnSambaStart() {
 
 function FnSambaStop() {
     let process = {
-        command: ["/bin/systemctl", "stop"]
+        command: ["systemctl", "stop"]
     };
 
     if (/Debian|Ubuntu/i.test(zfsmanager.system.operatingsystem)) {
@@ -12384,7 +12384,7 @@ function FnSambaStop() {
 
 function FnSambaUsersharesDirectoryCreate() {
     let process = {
-        command: ["/bin/sh", "-c", `[ ! -d /var/lib/samba/usershares ] && /bin/mkdir -p /var/lib/samba/usershares || printf "Skipped"`]
+        command: ["/bin/sh", "-c", `[ ! -d /var/lib/samba/usershares ] && mkdir -p /var/lib/samba/usershares || printf "Skipped"`]
     };
 
     FnConsole.log[2]("Samba, Usershares Directory, Create: In Progress")
@@ -12488,7 +12488,7 @@ function FnSambaZfsShareConfigurationGenerate(filesystem = { name, id, mountpoin
 
 function FnSambaZfsShareConfigurationGet(pool = { name, id, altroot: false, readonly: false }, filesystem = { name, id }, modal = { name, id }) {
     let process = {
-        command: ["/bin/cat", "/" + (pool.altroot || pool.readonly ? "run" : "etc") + "/cockpit/zfs/shares/" + FnGenerateShareFileName({ name: filesystem.name }) + ".conf"]
+        command: ["cat", "/" + (pool.altroot || pool.readonly ? "run" : "etc") + "/cockpit/zfs/shares/" + FnGenerateShareFileName({ name: filesystem.name }) + ".conf"]
     };
     let samba = {
         share: {
@@ -12603,7 +12603,7 @@ function FnSambaZfsShareConfigurationGet(pool = { name, id, altroot: false, read
 
 function FnSambaZfsShareConfigurationPathSet(pool = { name, id, altroot: false }, filesystem = { name, namenew, id, mountpoint }, display = { silent: true }) {
     let process = {
-        command: ["/bin/cat", "/" + (pool.altroot ? "run" : "etc") + "/cockpit/zfs/shares/" + FnGenerateShareFileName({ name: filesystem.name }) + ".conf"],
+        command: ["cat", "/" + (pool.altroot ? "run" : "etc") + "/cockpit/zfs/shares/" + FnGenerateShareFileName({ name: filesystem.name }) + ".conf"],
         promise: cockpit.defer()
     };
     let samba = {
@@ -12970,7 +12970,7 @@ function FnSambaZfsShareConfigureCommand(pool = { name, id }, filesystem = { nam
 
 function FnSambaZfsShareDisable(pool = { name, id, altroot: false, readonly: false }, filesystem = { name, id }) {
     let process = {
-        command: ["/bin/rm", "-f", "/" + (pool.altroot || pool.readonly ? "run" : "etc") + "/cockpit/zfs/shares/" + FnGenerateShareFileName({ name: filesystem.name }) + ".conf"]
+        command: ["rm", "-f", "/" + (pool.altroot || pool.readonly ? "run" : "etc") + "/cockpit/zfs/shares/" + FnGenerateShareFileName({ name: filesystem.name }) + ".conf"]
     };
 
     FnConsole.log[2]("Samba, Share, Disable: In Progress, Pool: " + pool.name + ", File System: " + filesystem.name);
@@ -12987,7 +12987,7 @@ function FnSambaZfsShareDisable(pool = { name, id, altroot: false, readonly: fal
 
 function FnSambaZfsShareEnable(pool = { name, id }, filesystem = { name, id, mountpoint }, samba = { share: { additional: [], administrative: false, browseable: true, guestok: false, name, comment, readonly: false, temporary: false } }) {
     let process = {
-        command: ["/bin/sh", "-c", "printf " + FnSambaZfsShareConfigurationGenerate({ name: filesystem.name, id: filesystem.id, mountpoint: filesystem.mountpoint }, { enable: true, share: { additional: samba.share.additional, administrative: samba.share.administrative, browseable: samba.share.browseable, guestok: samba.share.guestok, name: samba.share.name, comment: samba.share.comment, readonly: samba.share.readonly, temporary: samba.share.temporary } })]
+        command: ["sh", "-c", "printf " + FnSambaZfsShareConfigurationGenerate({ name: filesystem.name, id: filesystem.id, mountpoint: filesystem.mountpoint }, { enable: true, share: { additional: samba.share.additional, administrative: samba.share.administrative, browseable: samba.share.browseable, guestok: samba.share.guestok, name: samba.share.name, comment: samba.share.comment, readonly: samba.share.readonly, temporary: samba.share.temporary } })]
     };
 
     FnConsole.log[2]("Samba, Share, Enable: In Progress, Pool: " + pool.name + ", File System: " + filesystem.name);
@@ -13004,7 +13004,7 @@ function FnSambaZfsShareEnable(pool = { name, id }, filesystem = { name, id, mou
 
 function FnSambaZfsSharesConfigurationReload() {
     let process = {
-        command: ["/bin/sh", "-c", "echo '# COCKPIT ZFS MANAGER\n# WARNING: DO NOT EDIT, AUTO-GENERATED CONFIGURATION' > /etc/cockpit/zfs/shares.conf && /bin/ls /etc/cockpit/zfs/shares/*.conf 2> /dev/null | /bin/sed -e 's/^/include = /' >> /etc/cockpit/zfs/shares.conf"]
+        command: ["sh", "-c", "echo '# COCKPIT ZFS MANAGER\n# WARNING: DO NOT EDIT, AUTO-GENERATED CONFIGURATION' > /etc/cockpit/zfs/shares.conf && ls /etc/cockpit/zfs/shares/*.conf 2> /dev/null | sed -e 's/^/include = /' >> /etc/cockpit/zfs/shares.conf"]
     };
 
     FnConsole.log[2]("Samba, ZFS Shares Configuration, Reload: In Progress");
@@ -21357,7 +21357,6 @@ async function FnModalReplicationTaskCreateContent(pool, filesystem, modal) {
                         'create',
                         recursive ? '--recursive' : null,
                         '--donotask',
-                        '--mbuffer=/usr/bin/mbuffer',
                         \`--mbuffersize=\${mBufferSize}\`,
                         'SRC',
                         \`\${srcPlan}\`,
