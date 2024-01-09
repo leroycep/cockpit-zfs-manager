@@ -1095,7 +1095,7 @@ function FnZfsVersionWarnings() {
 
 function FnStoragePoolsGet() {
     let process = {
-        command: ["/sbin/zpool", "list", "-H", "-o", "name,guid,health,size,alloc,free,fragmentation,readonly,altroot,autotrim,version,feature@allocation_classes,feature@async_destroy,feature@bookmark_v2,feature@bookmarks,feature@device_removal,feature@edonr,feature@embedded_data,feature@empty_bpobj,feature@enabled_txg,feature@encryption,feature@extensible_dataset,feature@filesystem_limits,feature@hole_birth,feature@large_blocks,feature@large_dnode,feature@lz4_compress,feature@multi_vdev_crash_dump,feature@obsolete_counts,feature@project_quota,feature@resilver_defer,feature@sha512,feature@skein,feature@spacemap_histogram,feature@spacemap_v2,feature@userobj_accounting,feature@zpool_checkpoint", "-p"]
+        command: ["zpool", "list", "-H", "-o", "name,guid,health,size,alloc,free,fragmentation,readonly,altroot,autotrim,version,feature@allocation_classes,feature@async_destroy,feature@bookmark_v2,feature@bookmarks,feature@device_removal,feature@edonr,feature@embedded_data,feature@empty_bpobj,feature@enabled_txg,feature@encryption,feature@extensible_dataset,feature@filesystem_limits,feature@hole_birth,feature@large_blocks,feature@large_dnode,feature@lz4_compress,feature@multi_vdev_crash_dump,feature@obsolete_counts,feature@project_quota,feature@resilver_defer,feature@sha512,feature@skein,feature@spacemap_histogram,feature@spacemap_v2,feature@userobj_accounting,feature@zpool_checkpoint", "-p"]
     };
     let pools = {
         empty: true
@@ -1532,7 +1532,7 @@ function FnStoragePoolsGetCommand(process = { data, message }) {
 
 function FnStoragePoolsImportableBlockDeviceGet(pools = { destroyed: false }) {
     let process = {
-        command: ["/bin/sh", "-c", "/sbin/zpool import -d /dev" + (pools.destroyed ? " -D" : "") + " 2> /dev/null | grep -E 'pool:\| id:\|state:'  | tr '\\\n' ','"]
+        command: ["/bin/sh", "-c", "zpool import -d /dev" + (pools.destroyed ? " -D" : "") + " 2> /dev/null | grep -E 'pool:\| id:\|state:'  | tr '\\\n' ','"]
     };
 
     FnConsole.log[2]("Storage Pools, Importable, Block Device, Get: In Progress");
@@ -1549,7 +1549,7 @@ function FnStoragePoolsImportableBlockDeviceGet(pools = { destroyed: false }) {
 
 function FnStoragePoolsImportableDiskGet(pools = { destroyed: false }) {
     let process = {
-        command: ["/bin/sh", "-c", "/sbin/zpool import -d /dev/disk/by-id" + (pools.destroyed ? " -D" : "") + " 2> /dev/null | grep -E 'pool:\| id:\|state:'  | tr '\\\n' ','"]
+        command: ["/bin/sh", "-c", "zpool import -d /dev/disk/by-id" + (pools.destroyed ? " -D" : "") + " 2> /dev/null | grep -E 'pool:\| id:\|state:'  | tr '\\\n' ','"]
     };
 
     FnConsole.log[2]("Storage Pools, Importable, Disk / WWN, Get: In Progress");
@@ -1742,7 +1742,7 @@ function FnStoragePoolsImportableGetFail(pools = { destroyed: false }) {
 
 function FnStoragePoolsImportableHardwarePathGet(pools = { destroyed: false }) {
     let process = {
-        command: ["/bin/sh", "-c", "/sbin/zpool import", "-d", "/dev/disk/by-path", (pools.destroyed ? " -D" : ""), " 2> /dev/null | grep -E 'pool:\| id:\|state:'  | tr '\\\n' ','" ]
+        command: ["/bin/sh", "-c", "zpool import", "-d", "/dev/disk/by-path", (pools.destroyed ? " -D" : ""), " 2> /dev/null | grep -E 'pool:\| id:\|state:'  | tr '\\\n' ','" ]
     };
 
     FnConsole.log[2]("Storage Pools, Importable, Hardware Path, Get: In Progress");
@@ -1759,7 +1759,7 @@ function FnStoragePoolsImportableHardwarePathGet(pools = { destroyed: false }) {
 
 function FnStoragePoolsImportableVirtualDeviceMappingGet(pools = { destroyed: false }) {
     let process = {
-        command: ["/bin/sh", "-c", "/sbin/zpool import", "-d", "/dev/disk/by-vdev", (pools.destroyed ? " -D" : ""), "2> /dev/null | grep -E 'pool:\| id:\|state:'  | tr '\\\n' ','"]
+        command: ["/bin/sh", "-c", "zpool import", "-d", "/dev/disk/by-vdev", (pools.destroyed ? " -D" : ""), "2> /dev/null | grep -E 'pool:\| id:\|state:'  | tr '\\\n' ','"]
     };
 
     FnConsole.log[2]("Storage Pools, Importable, Virtual Device Mapping, Get: In Progress");
@@ -1779,7 +1779,7 @@ function FnStoragePoolsSystemReservedGet() {
         id: []
     };
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "name,mountpoint", "-d", "3"]
+        command: ["zfs", "list", "-H", "-o", "name,mountpoint", "-d", "3"]
     };
 
     FnConsole.log[2]("Storage Pools, System Reserved, Get: In Progress");
@@ -1815,7 +1815,7 @@ function FnStoragePoolsSystemReservedGet() {
 
 function FnStoragePoolsTemporaryGet() {
     let process = {
-        command: ["/sbin/zpool", "list", "-H", "-o", "name,readonly,altroot"]
+        command: ["zpool", "list", "-H", "-o", "name,readonly,altroot"]
     };
 
     FnConsole.log[2]("Storage Pools, Temporary, Get: In Progress");
@@ -1836,7 +1836,7 @@ function FnStoragePoolsTemporaryGet() {
 
 function FnStoragePoolAlternativeRootGet(pool = { name, id }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "list", "-H", "-o", "altroot", pool.name]
+        command: ["zpool", "list", "-H", "-o", "altroot", pool.name]
     };
 
     FnConsole.log[2]("Storage Pools, Alternative Root, Get: In Progress, Pool: " + pool.name);
@@ -1859,7 +1859,7 @@ function FnStoragePoolAlternativeRootGet(pool = { name, id }, modal = { name, id
 
 function FnStoragePoolClear(pool = { name, id }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "clear", pool.name]
+        command: ["zpool", "clear", pool.name]
     };
 
     FnConsole.log[2]("Storage Pools, Clear Errors: In Progress, Pool: " + pool.name);
@@ -1889,7 +1889,7 @@ function FnStoragePoolClear(pool = { name, id }, modal = { name, id }) {
 
 function FnStoragePoolConfigurationFeaturesDisabledGet(pool = { name, id }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "get", "feature@allocation_classes,feature@async_destroy,feature@bookmark_v2,feature@bookmarks,feature@device_removal,feature@edonr,feature@embedded_data,feature@empty_bpobj,feature@enabled_txg,feature@encryption,feature@extensible_dataset,feature@filesystem_limits,feature@hole_birth,feature@large_blocks,feature@large_dnode,feature@lz4_compress,feature@multi_vdev_crash_dump,feature@obsolete_counts,feature@project_quota,feature@resilver_defer,feature@sha512,feature@skein,feature@spacemap_histogram,feature@spacemap_v2,feature@userobj_accounting,feature@zpool_checkpoint", "-H", "-o", "property,value", pool.name]
+        command: ["zpool", "get", "feature@allocation_classes,feature@async_destroy,feature@bookmark_v2,feature@bookmarks,feature@device_removal,feature@edonr,feature@embedded_data,feature@empty_bpobj,feature@enabled_txg,feature@encryption,feature@extensible_dataset,feature@filesystem_limits,feature@hole_birth,feature@large_blocks,feature@large_dnode,feature@lz4_compress,feature@multi_vdev_crash_dump,feature@obsolete_counts,feature@project_quota,feature@resilver_defer,feature@sha512,feature@skein,feature@spacemap_histogram,feature@spacemap_v2,feature@userobj_accounting,feature@zpool_checkpoint", "-H", "-o", "property,value", pool.name]
     };
 
     FnConsole.log[2]("Storage Pools, Configuration, Features, Disabled, Get: In Progress, Pool: " + pool.name);
@@ -2056,7 +2056,7 @@ function FnStoragePoolConfigurationFeaturesDisabledGet(pool = { name, id }, moda
 
 function FnStoragePoolConfigurationFeaturesGet(pool = { name, id, boot: false }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "get", "readonly,feature@allocation_classes,feature@async_destroy,feature@bookmark_v2,feature@bookmarks,feature@device_removal,feature@edonr,feature@embedded_data,feature@empty_bpobj,feature@enabled_txg,feature@encryption,feature@extensible_dataset,feature@filesystem_limits,feature@hole_birth,feature@large_blocks,feature@large_dnode,feature@lz4_compress,feature@multi_vdev_crash_dump,feature@obsolete_counts,feature@project_quota,feature@resilver_defer,feature@sha512,feature@skein,feature@spacemap_histogram,feature@spacemap_v2,feature@userobj_accounting,feature@zpool_checkpoint", "-H", "-o", "property,value", pool.name]
+        command: ["zpool", "get", "readonly,feature@allocation_classes,feature@async_destroy,feature@bookmark_v2,feature@bookmarks,feature@device_removal,feature@edonr,feature@embedded_data,feature@empty_bpobj,feature@enabled_txg,feature@encryption,feature@extensible_dataset,feature@filesystem_limits,feature@hole_birth,feature@large_blocks,feature@large_dnode,feature@lz4_compress,feature@multi_vdev_crash_dump,feature@obsolete_counts,feature@project_quota,feature@resilver_defer,feature@sha512,feature@skein,feature@spacemap_histogram,feature@spacemap_v2,feature@userobj_accounting,feature@zpool_checkpoint", "-H", "-o", "property,value", pool.name]
     };
 
     pool.readonly = false;
@@ -2386,7 +2386,7 @@ function FnStoragePoolConfigurationFeaturesGet(pool = { name, id, boot: false },
 
 function FnStoragePoolConfigurationGet(pool = { name, id, boot: false, root: false }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "get", "readonly,altroot,ashift,autoexpand,autoreplace,autotrim,bootfs,cachefile,comment,delegation,failmode,guid,listsnapshots,multihost,version", "-H", "-o", "property,value", pool.name]
+        command: ["zpool", "get", "readonly,altroot,ashift,autoexpand,autoreplace,autotrim,bootfs,cachefile,comment,delegation,failmode,guid,listsnapshots,multihost,version", "-H", "-o", "property,value", pool.name]
     };
 
     pool.readonly = false;
@@ -2648,7 +2648,7 @@ function FnStoragePoolConfigureCommand(pool = { name, id, properties: { new: [] 
         promise = promise.then(_ => new Promise(resolve =>
             setTimeout(function () {
                 let process = {
-                    command: ["/sbin/zpool", "set", _value, pool.name]
+                    command: ["zpool", "set", _value, pool.name]
                 };
 
                 FnConsole.log[2]("Storage Pools, Configure: In Progress, Pool: " + pool.name);
@@ -2800,7 +2800,7 @@ function FnStoragePoolConfigureFeaturesCommand(pool = { name, id, features: { ne
         promise = promise.then(_ => new Promise(resolve =>
             setTimeout(function () {
                 let process = {
-                    command: ["/sbin/zpool", "set", _value, pool.name]
+                    command: ["zpool", "set", _value, pool.name]
                 };
 
                 FnConsole.log[2]("Storage Pools, Configure, Features: In Progress, Pool: " + pool.name);
@@ -2850,7 +2850,7 @@ function FnStoragePoolConfigureFeaturesFail(pool = { name, id }) {
 
 function FnStoragePoolCreate(pool = { name, ashift, autoexpand, autoreplace, autotrim, force, virtualdevice }, filesystem = { compression, dedup, recordsize, refreservationpercent, selinux }, disks = { id: [] }) {
     let process = {
-        command: ["/sbin/zpool", "create", "-o", "ashift=" + pool.ashift, "-o", "autoexpand=" + pool.autoexpand, "-o", "autoreplace=" + pool.autoreplace, "-o", "autotrim=" + pool.autotrim, "-O", "aclinherit=passthrough", "-O", "acltype=posixacl", "-O", "casesensitivity=sensitive", "-O", "compression=" + filesystem.compression, "-O", "normalization=formD", "-O", "recordsize=" + filesystem.recordsize, "-O", "sharenfs=off", "-O", "sharesmb=off", "-O", "utf8only=on", "-O", "xattr=sa", pool.name]
+        command: ["zpool", "create", "-o", "ashift=" + pool.ashift, "-o", "autoexpand=" + pool.autoexpand, "-o", "autoreplace=" + pool.autoreplace, "-o", "autotrim=" + pool.autotrim, "-O", "aclinherit=passthrough", "-O", "acltype=posixacl", "-O", "casesensitivity=sensitive", "-O", "compression=" + filesystem.compression, "-O", "normalization=formD", "-O", "recordsize=" + filesystem.recordsize, "-O", "sharenfs=off", "-O", "sharesmb=off", "-O", "utf8only=on", "-O", "xattr=sa", pool.name]
     };
     let modal = {
         hide: true
@@ -3213,7 +3213,7 @@ function FnStoragePoolDestroy(pool = { name, id, altroot: false, force: false, l
 
 function FnStoragePoolDestroyCommand(pool = { name, id, force: false }) {
     let process = {
-        command: ["/sbin/zpool", "destroy", pool.name]
+        command: ["zpool", "destroy", pool.name]
     };
 
     if (pool.force) {
@@ -3413,7 +3413,7 @@ function FnStoragePoolDiskAttach(pool = { name, id, force: false }, virtualdevic
 
 function FnStoragePoolDiskAttachCommand(pool = { name, id, force: false }, virtualdevice = { id, disk: true }, disk = { id, idnew }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "attach", pool.name, disk.id, disk.idnew]
+        command: ["zpool", "attach", pool.name, disk.id, disk.idnew]
     };
 
     if (pool.force) {
@@ -3459,7 +3459,7 @@ function FnStoragePoolDiskAttachFail(pool = { name, id }, virtualdevice = { id, 
 
 function FnStoragePoolDiskClear(pool = { name, id }, disk = { id }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "clear", pool.name, disk.id]
+        command: ["zpool", "clear", pool.name, disk.id]
     };
 
     FnConsole.log[2]("Storage Pools, Disk, Clear Errors: In Progress, Pool: " + pool.name + ", Disk: " + disk.id);
@@ -3489,7 +3489,7 @@ function FnStoragePoolDiskClear(pool = { name, id }, disk = { id }, modal = { na
 
 function FnStoragePoolDiskDetach(pool = { name, id }, disk = { id, labelclear: false }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "detach", pool.name, disk.id]
+        command: ["zpool", "detach", pool.name, disk.id]
     };
 
     modal.hide = true;
@@ -3540,7 +3540,7 @@ function FnStoragePoolDiskDetach(pool = { name, id }, disk = { id, labelclear: f
 
 function FnStoragePoolDiskLabelClear(pool = { name, id }, disk = { id, inactive: false }, display = { silent: false }) {
     let process = {
-        command: ["/sbin/zpool", "labelclear", disk.id]
+        command: ["zpool", "labelclear", disk.id]
     };
 
     if (disk.inactive) {
@@ -3573,7 +3573,7 @@ function FnStoragePoolDiskLabelClear(pool = { name, id }, disk = { id, inactive:
 
 function FnStoragePoolDiskOffline(pool = { name, id }, disk = { id, force: false, temporary: false }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "offline", pool.name, disk.id]
+        command: ["zpool", "offline", pool.name, disk.id]
     };
 
     if (disk.force) {
@@ -3610,7 +3610,7 @@ function FnStoragePoolDiskOffline(pool = { name, id }, disk = { id, force: false
 
 function FnStoragePoolDiskOnline(pool = { name, id, scrub: false }, disk = { id, expand: false }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "online", pool.name, disk.id]
+        command: ["zpool", "online", pool.name, disk.id]
     };
 
     if (disk.expand) {
@@ -3656,7 +3656,7 @@ function FnStoragePoolDiskOnline(pool = { name, id, scrub: false }, disk = { id,
 
 function FnStoragePoolDiskReplace(pool = { name, id, force: false }, disk = { id, idnew }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "replace", pool.name, disk.id, disk.idnew]
+        command: ["zpool", "replace", pool.name, disk.id, disk.idnew]
     };
 
     if (pool.force) {
@@ -3780,7 +3780,7 @@ function FnStoragePoolExport(pool = { name, id, altroot: false, force: false, re
 
 function FnStoragePoolExportCommand(pool = { name, id, force: false }, display = { refresh: true }) {
     let process = {
-        command: ["/sbin/zpool", "export", pool.name]
+        command: ["zpool", "export", pool.name]
     };
 
     if (pool.force) {
@@ -3874,7 +3874,7 @@ function FnStoragePoolHealthIcon(pool = { health }) {
 
 function FnStoragePoolImport(pool = { name, altroot, destroyed: false, force: false, guid, ignoremissinglog: false, namenew, readonly: false, recoverymode: false }, filesystem = { mount: true, selinux: true }, disks = { id: { blockdevice: true, disk: false, path: false, vdev: false }, identifier }) {
     let process = {
-        command: [ "/sbin/zpool", "import", pool.guid]
+        command: [ "zpool", "import", pool.guid]
     };
     let modal = {
         hide: true
@@ -4106,7 +4106,7 @@ function FnStoragePoolImport(pool = { name, altroot, destroyed: false, force: fa
 
 function FnStoragePoolRefreservationSet(pool = { name, id }, filesystem = { refreservation }) {
     let process = {
-        command: ["/sbin/zfs", "set", "refreservation=" + filesystem.refreservation, pool.name]
+        command: ["zfs", "set", "refreservation=" + filesystem.refreservation, pool.name]
     };
 
     FnConsole.log[2]("Storage Pools, Refreservation, Set: In Progress");
@@ -4176,7 +4176,7 @@ function FnStoragePoolRefreshAutoDisable(pool = { name, id }) {
 
 function FnStoragePoolRefreshCommand(pool = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "list", "-H", "-o", "guid,health,size,alloc,free,fragmentation,autotrim,version,feature@allocation_classes,feature@async_destroy,feature@bookmark_v2,feature@bookmarks,feature@device_removal,feature@edonr,feature@embedded_data,feature@empty_bpobj,feature@enabled_txg,feature@encryption,feature@extensible_dataset,feature@filesystem_limits,feature@hole_birth,feature@large_blocks,feature@large_dnode,feature@lz4_compress,feature@multi_vdev_crash_dump,feature@obsolete_counts,feature@project_quota,feature@resilver_defer,feature@sha512,feature@skein,feature@spacemap_histogram,feature@spacemap_v2,feature@userobj_accounting,feature@zpool_checkpoint", "-p", pool.name]
+        command: ["zpool", "list", "-H", "-o", "guid,health,size,alloc,free,fragmentation,autotrim,version,feature@allocation_classes,feature@async_destroy,feature@bookmark_v2,feature@bookmarks,feature@device_removal,feature@edonr,feature@embedded_data,feature@empty_bpobj,feature@enabled_txg,feature@encryption,feature@extensible_dataset,feature@filesystem_limits,feature@hole_birth,feature@large_blocks,feature@large_dnode,feature@lz4_compress,feature@multi_vdev_crash_dump,feature@obsolete_counts,feature@project_quota,feature@resilver_defer,feature@sha512,feature@skein,feature@spacemap_histogram,feature@spacemap_v2,feature@userobj_accounting,feature@zpool_checkpoint", "-p", pool.name]
     };
 
     FnConsole.log[2]("Storage Pools, Refresh: In Progress, Pool: " + pool.name);
@@ -4289,7 +4289,7 @@ function FnStoragePoolRefreshCommand(pool = { name, id }) {
 
 function FnStoragePoolRegenerateGuid(pool = { name, id }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "reguid", pool.name]
+        command: ["zpool", "reguid", pool.name]
     };
 
     FnConsole.log[2]("Storage Pools, Regenerate GUID: In Progress, Pool: " + pool.name);
@@ -4319,7 +4319,7 @@ function FnStoragePoolRegenerateGuid(pool = { name, id }, modal = { name, id }) 
 
 function FnStoragePoolResilver(pool = { name, id }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "resilver", pool.name]
+        command: ["zpool", "resilver", pool.name]
     };
 
     FnConsole.log[1]("Storage Pools, Resilver, Start: In Progress, Pool: " + pool.name);
@@ -4349,7 +4349,7 @@ function FnStoragePoolResilver(pool = { name, id }, modal = { name, id }) {
 
 function FnStoragePoolScrubPause(pool = { name, id }, display = { refresh: true }) {
     let process = {
-        command: ["/sbin/zpool", "scrub", "-p", pool.name]
+        command: ["zpool", "scrub", "-p", pool.name]
     };
 
     FnConsole.log[2]("Storage Pools, Scrub, Pause: In Progress, Pool: " + pool.name);
@@ -4377,7 +4377,7 @@ function FnStoragePoolScrubPause(pool = { name, id }, display = { refresh: true 
 
 function FnStoragePoolScrubStart(pool = { name, id }, scrub = { resume: false }, display = { refresh: true }) {
     let process = {
-        command: ["/sbin/zpool", "scrub", pool.name]
+        command: ["zpool", "scrub", pool.name]
     };
 
     FnConsole.log[2]("Storage Pools, Scrub, " + (scrub.resume ? "Resume" : "Start") + ": In Progress, Pool: " + pool.name);
@@ -4415,7 +4415,7 @@ function FnStoragePoolScrubStart(pool = { name, id }, scrub = { resume: false },
 
 function FnStoragePoolScrubStop(pool = { name, id }, display = { refresh: true }) {
     let process = {
-        command: ["/sbin/zpool", "scrub", "-s", pool.name]
+        command: ["zpool", "scrub", "-s", pool.name]
     };
 
     FnConsole.log[2]("Storage Pools, Scrub, Stop: In Progress, Pool: " + pool.name);
@@ -4443,7 +4443,7 @@ function FnStoragePoolScrubStop(pool = { name, id }, display = { refresh: true }
 
 function FnStoragePoolSelinuxContextsSambaSet(pool = { name, id }, display = { silent: false }) {
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "name", "-r", "-t", "filesystem", pool.name],
+        command: ["zfs", "list", "-H", "-o", "name", "-r", "-t", "filesystem", pool.name],
         promise: cockpit.defer()
     };
 
@@ -4498,7 +4498,7 @@ function FnStoragePoolSelinuxContextsSambaSet(pool = { name, id }, display = { s
 
 function FnStoragePoolSizeGet(pool = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "get", "size", "-H", "-o", "value", "-p", pool.name]
+        command: ["zpool", "get", "size", "-H", "-o", "value", "-p", pool.name]
     };
 
     FnConsole.log[2]("Storage Pools, Size, Get: In Progress, Pool: " + pool.name);
@@ -4525,7 +4525,7 @@ function FnStoragePoolSpinnerHide(pool = { name, id }) {
 
 function FnStoragePoolTrimCancel(pool = { name, id }, disk = { id }) {
     let process = {
-        command: ["/sbin/zpool", "trim", "-c", pool.name]
+        command: ["zpool", "trim", "-c", pool.name]
     };
 
     if (disk.id) {
@@ -4555,7 +4555,7 @@ function FnStoragePoolTrimCancel(pool = { name, id }, disk = { id }) {
 
 function FnStoragePoolTrimStart(pool = { name, id }, disk = { id }, trim = { resume: false, secure: false  }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "trim", pool.name]
+        command: ["zpool", "trim", pool.name]
     };
 
     if (trim.secure) {
@@ -4596,7 +4596,7 @@ function FnStoragePoolTrimStart(pool = { name, id }, disk = { id }, trim = { res
 
 function FnStoragePoolTrimSuspend(pool = { name, id }, disk = { id }) {
     let process = {
-        command: ["/sbin/zpool", "trim", "-s", pool.name]
+        command: ["zpool", "trim", "-s", pool.name]
     };
 
     if (disk.id) {
@@ -4626,7 +4626,7 @@ function FnStoragePoolTrimSuspend(pool = { name, id }, disk = { id }) {
 
 function FnStoragePoolUpgrade(pool = { name, id }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "upgrade", pool.name]
+        command: ["zpool", "upgrade", pool.name]
     };
 
     FnConsole.log[1]("Storage Pools, Upgrade: In Progress, Pool: " + pool.name);
@@ -4666,7 +4666,7 @@ function FnStoragePoolUpgradeFail(pool = { name, id }, process = { data, message
 
 function FnStoragePoolVirtualDeviceAdd(pool = { name, id, force: false, virtualdevice }, disks = { id: [] }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "add", pool.name]
+        command: ["zpool", "add", pool.name]
     };
 
     modal.hide = true;
@@ -4742,7 +4742,7 @@ function FnStoragePoolVirtualDeviceAdd(pool = { name, id, force: false, virtuald
 
 function FnStoragePoolVirtualDeviceClear(pool = { name, id }, virtualdevice = { id }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "clear", pool.name, virtualdevice.id]
+        command: ["zpool", "clear", pool.name, virtualdevice.id]
     };
 
     FnConsole.log[2]("Storage Pools, Virtual Device, Clear Errors: In Progress, Pool: " + pool.name + ", Virtual Device: " + virtualdevice.id);
@@ -4772,7 +4772,7 @@ function FnStoragePoolVirtualDeviceClear(pool = { name, id }, virtualdevice = { 
 
 function FnStoragePoolVirtualDeviceRemove(pool = { name, id }, virtualdevice = { id, labelclear: false }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zpool", "remove", pool.name, virtualdevice.id]
+        command: ["zpool", "remove", pool.name, virtualdevice.id]
     };
 
     modal.hide = true;
@@ -4827,7 +4827,7 @@ function FnStoragePoolVirtualDeviceRemove(pool = { name, id }, virtualdevice = {
 
 function FnFileSystemsGet(pool = { name, id }) {
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "readonly,name,avail,used,usedsnap,usedrefreserv,recordsize,compression,dedup,sharenfs,sharesmb,mountpoint,mounted,origin,encryption,encryptionroot,keyformat,keystatus", "-r", "-p", pool.name]
+        command: ["zfs", "list", "-H", "-o", "readonly,name,avail,used,usedsnap,usedrefreserv,recordsize,compression,dedup,sharenfs,sharesmb,mountpoint,mounted,origin,encryption,encryptionroot,keyformat,keystatus", "-r", "-p", pool.name]
     };
     let filesystems = {
         empty: true
@@ -5352,7 +5352,7 @@ function FnFileSystemsLockedGet() {
         id: []
     };
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "name,encryption,encryptionroot,keyformat,keystatus", "-r", "-t", "filesystem"]
+        command: ["zfs", "list", "-H", "-o", "name,encryption,encryptionroot,keyformat,keystatus", "-r", "-t", "filesystem"]
     };
 
     $("#listgroup-storagepools-filesystems-unlock-filesystems").empty().append(`<li id="spinner-storagepools-filesystems-unlock-filesystems" class="list-group-item"><div class="spinner"></div></li>`);
@@ -5444,7 +5444,7 @@ function FnFileSystemsLockedGet() {
 
 function FnFileSystemsMountedGet(pool = { name, id }, filesystem = { name, id }, modal = { alert: { id, mount: true } }) {
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "name,mounted", "-r", "-t", "filesystem", filesystem.name]
+        command: ["zfs", "list", "-H", "-o", "name,mounted", "-r", "-t", "filesystem", filesystem.name]
     };
 
     filesystem.children = {
@@ -5481,7 +5481,7 @@ function FnFileSystemsMountedGet(pool = { name, id }, filesystem = { name, id },
 
 function FnFileSystemsNamesGet(pool = { name, id }, filesystem = { existing: { name, clone: false, encryption: false, encryptionroot, origin }, override: false }, modal = { dropdown: { id, selected } }) {
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "name,encryption,encryptionroot,keystatus", "-r", "-t", "filesystem", pool.name]
+        command: ["zfs", "list", "-H", "-o", "name,encryption,encryptionroot,keystatus", "-r", "-t", "filesystem", pool.name]
     };
 
     FnConsole.log[2]("File Systems, Names, Get: In Progress, Pool: " + pool.name);
@@ -5666,7 +5666,7 @@ function FnFileSystemChangePassphrase(pool = { name, id }, filesystem = { name, 
         filesystem.passphrase = filesystem.passphrase.replace(/\'/g, "\'\"\'\"\'");
     }
 
-    process.command = ["/bin/sh", "-c", "printf '" + filesystem.passphrase + "' | /sbin/zfs change-key \"" + filesystem.name + "\""];
+    process.command = ["/bin/sh", "-c", "printf '" + filesystem.passphrase + "' | zfs change-key \"" + filesystem.name + "\""];
 
     FnConsole.log[2]("File Systems, Change Passphrase: In Progress, Pool: " + pool.name + ", File System: " + filesystem.name);
     FnConsole.log[3](FnConsoleCommand({ command: process.command }));
@@ -5745,7 +5745,7 @@ function FnFileSystemChangePassphraseFail(pool = { name, id }, filesystem = { na
 
 function FnFileSystemChildDatasetsGet(pool = { name, id }, filesystem = { name, id, clones: true }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "name,clones", "-r", "-t", "filesystem,snapshot", filesystem.name]
+        command: ["zfs", "list", "-H", "-o", "name,clones", "-r", "-t", "filesystem,snapshot", filesystem.name]
     };
 
     FnConsole.log[2]("File Systems, Child, Datasets, Get: In Progress, Pool: " + pool.name + ", File System: " + filesystem.name);
@@ -5805,7 +5805,7 @@ function FnFileSystemChildDatasetsGet(pool = { name, id }, filesystem = { name, 
 
 function FnFileSystemChildFileSystemsGet(pool = { name, id }, filesystem = { name, id }, filesystems = { id: [] }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "name", "-r", "-t", "filesystem"]
+        command: ["zfs", "list", "-H", "-o", "name", "-r", "-t", "filesystem"]
     };
 
     filesystems.id.forEach(_value => _value && process.command.push(_value));
@@ -5853,7 +5853,7 @@ function FnFileSystemChildFileSystemsGet(pool = { name, id }, filesystem = { nam
 
 function FnFileSystemChildSnapshotsGet(pool = { name, id }, filesystem = { name, id }, snapshots = { id: [] }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "name", "-r", "-t", "snapshot"]
+        command: ["zfs", "list", "-H", "-o", "name", "-r", "-t", "snapshot"]
     };
 
     snapshots.id.forEach(_value => _value && process.command.push(_value));
@@ -5899,7 +5899,7 @@ function FnFileSystemChildSnapshotsGet(pool = { name, id }, filesystem = { name,
 
 function FnFileSystemConfigurationGet(pool = { name, id, readonly: false }, filesystem = { name, id }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zfs", "get", "readonly,aclinherit,acltype,atime,available,canmount,casesensitivity,checksum,compression,context,dedup,dnodesize,defcontext,encryption,encryptionroot,fscontext,guid,mountpoint,quota,recordsize,refreservation,rootcontext,sharenfs,sharesmb,special_small_blocks,used,xattr", "-H", "-o", "property,value,source", "-p", filesystem.name]
+        command: ["zfs", "get", "readonly,aclinherit,acltype,atime,available,canmount,casesensitivity,checksum,compression,context,dedup,dnodesize,defcontext,encryption,encryptionroot,fscontext,guid,mountpoint,quota,recordsize,refreservation,rootcontext,sharenfs,sharesmb,special_small_blocks,used,xattr", "-H", "-o", "property,value,source", "-p", filesystem.name]
     };
 
     if (!zfsmanager.user.admin && !zfsmanager.user.smb) {
@@ -6928,7 +6928,7 @@ function FnFileSystemConfigurationGet(pool = { name, id, readonly: false }, file
 
 function FnFileSystemConfigurationInheritedGet(pool = { name, id }, filesystem = { name }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zfs", "get", "atime,casesensitivity,compression,dedup,dnodesize,encryption,recordsize,special_small_blocks,xattr", "-H", "-o", "property,value,source", "-p", filesystem.name]
+        command: ["zfs", "get", "atime,casesensitivity,compression,dedup,dnodesize,encryption,recordsize,special_small_blocks,xattr", "-H", "-o", "property,value,source", "-p", filesystem.name]
     };
 
     FnConsole.log[2]("File Systems, Configuration, Inherited, Get: In Progress, Pool: " + pool.name + ", File System: " + filesystem.name);
@@ -7356,7 +7356,7 @@ function FnFileSystemConfigurationInheritedGet(pool = { name, id }, filesystem =
 
 function FnFileSystemConfigurationInheritedPropertyGet(pool = { name, id }, filesystem = { name, id, property }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zfs", "get", filesystem.property, "-H", "-o", "value", "-p", "-d", "0", filesystem.name.replace(/\/[^\/]+$/, "")]
+        command: ["zfs", "get", filesystem.property, "-H", "-o", "value", "-p", "-d", "0", filesystem.name.replace(/\/[^\/]+$/, "")]
     };
 
     FnConsole.log[2]("File Systems, Configuration, Property, Inherited, Get: In Progress, Pool: " + pool.name + ", File System: " + filesystem.name);
@@ -7565,7 +7565,7 @@ function FnFileSystemConfigure(pool = { name, id, altroot: false, readonly: fals
 
 function FnFileSystemConfigureCommand(pool = { name, id, altroot: false }, filesystem = { name, id, mountpoint, properties: { new: [] }, type }, samba = { restart: false }, modal = { id }) {
     let process = {
-        command: ["/bin/sh", "-c", "/sbin/zfs set " + filesystem.properties.new.join(" ") + " " + `"` + filesystem.name + `"`]
+        command: ["/bin/sh", "-c", "zfs set " + filesystem.properties.new.join(" ") + " " + `"` + filesystem.name + `"`]
     };
 
     modal.hide = true;
@@ -7665,7 +7665,7 @@ function FnFileSystemConfigureInheritance(pool = { name, id }, filesystem = { na
     filesystem.properties.inherit.forEach((_value, _index) => {
         promise = promise.then(_ => new Promise(resolve =>
             setTimeout(function () {
-                process.command = ["/sbin/zfs", "inherit", _value, filesystem.name];
+                process.command = ["zfs", "inherit", _value, filesystem.name];
 
                 FnConsole.log[2]("File Systems, Configure, Inheritance: In Progress, Pool: " + pool.name + ", File System: " + filesystem.name);
                 FnConsole.log[3](FnConsoleCommand({ command: process.command }));
@@ -7763,9 +7763,9 @@ function FnFileSystemCreate(pool = { name, id, altroot: false }, filesystem = { 
             filesystem.passphrase = filesystem.passphrase.replace(/\'/g, "\'\"\'\"\'");
         }
 
-        process.command = ["/bin/sh", "-c", "printf '" + filesystem.passphrase + "' | /sbin/zfs create " + process.options + ` "` + filesystem.name + `"`];
+        process.command = ["/bin/sh", "-c", "printf '" + filesystem.passphrase + "' | zfs create " + process.options + ` "` + filesystem.name + `"`];
     } else {
-        process.command = ["/bin/sh", "-c", "/sbin/zfs create " + process.options + ` "` + filesystem.name + `"`];
+        process.command = ["/bin/sh", "-c", "zfs create " + process.options + ` "` + filesystem.name + `"`];
     }
 
     FnConsole.log[1]("File Systems, Create: In Progress, Pool: " + pool.name + ", File System: " + filesystem.name);
@@ -7987,7 +7987,7 @@ function FnFileSystemDestroy(pool = { name, id, altroot: false, readonly: false 
 
 function FnFileSystemDestroyCommand(pool = { name, id }, filesystem = { name, id, force: false, recursive: false, recursiveall: false }, display = { refresh: true }) {
     let process = {
-        command: ["/sbin/zfs", "destroy", filesystem.name]
+        command: ["zfs", "destroy", filesystem.name]
     };
 
     if (filesystem.force) {
@@ -8041,7 +8041,7 @@ function FnFileSystemDestroyFail(pool = { name, id }, filesystem = { name, id },
 
 function FnFileSystemLock(pool = { name, id }, filesystem = { name, id, type }, display = { refresh: true }) {
     let process = {
-        command: ["/sbin/zfs", "unload-key", filesystem.name]
+        command: ["zfs", "unload-key", filesystem.name]
     };
 
     FnConsole.log[2]("File Systems, Lock: In Progress, Pool: " + pool.name + ", File System: " + filesystem.name);
@@ -8073,7 +8073,7 @@ function FnFileSystemLock(pool = { name, id }, filesystem = { name, id, type }, 
 
 function FnFileSystemMount(pool = { name, id, altroot: false, readonly: false }, filesystem = { name, id, overlay: true, type }, samba = { enable: false }, display = { refresh: true }) {
     let process = {
-        command: ["/sbin/zfs", "mount", filesystem.name]
+        command: ["zfs", "mount", filesystem.name]
     };
 
     if (filesystem.overlay) {
@@ -8125,7 +8125,7 @@ function FnFileSystemMount(pool = { name, id, altroot: false, readonly: false },
 
 function FnFileSystemMountpointGet(pool = { name, id }, filesystem = { name, id }) {
     let process = {
-        command: ["/sbin/zfs", "get", "mountpoint", "-H", "-o", "value", filesystem.name]
+        command: ["zfs", "get", "mountpoint", "-H", "-o", "value", filesystem.name]
     };
 
     FnConsole.log[2]("File Systems, Mountpoint, Get: In Progress, Pool: " + pool.name + ", File System: " + filesystem.name);
@@ -8142,7 +8142,7 @@ function FnFileSystemMountpointGet(pool = { name, id }, filesystem = { name, id 
 
 function FnFileSystemPromote(pool = { name, id }, filesystem = { name, id, type }) {
     let process = {
-        command: ["/sbin/zfs", "promote", filesystem.name]
+        command: ["zfs", "promote", filesystem.name]
     };
 
     FnConsole.log[2]("File Systems, Promote: In Progress, Pool: " + pool.name + ", File System: " + filesystem.name);
@@ -8325,7 +8325,7 @@ function FnFileSystemRename(pool = { name, id, altroot: false }, filesystem = { 
 
 function FnFileSystemRenameCommand(pool = { name, id }, filesystem = { name, id, createnonexistparents: false, force: false, namenew, parent }, display = { refresh: true }) {
     let process = {
-        command: ["/sbin/zfs", "rename", filesystem.name, filesystem.namenew]
+        command: ["zfs", "rename", filesystem.name, filesystem.namenew]
     };
 
     if (filesystem.force) {
@@ -8406,7 +8406,7 @@ function FnFileSystemRenameFail(pool = { name, id }, filesystem = { name, id, cr
 
 function FnFileSystemSelinuxContextsSambaSet(pool = { name, id }, filesystem = { name }) {
     let process = {
-        command: ["/sbin/zfs", "set", "context=system_u:object_r:samba_share_t:s0", "defcontext=system_u:object_r:samba_share_t:s0", "fscontext=system_u:object_r:samba_share_t:s0", "rootcontext=system_u:object_r:samba_share_t:s0", filesystem.name]
+        command: ["zfs", "set", "context=system_u:object_r:samba_share_t:s0", "defcontext=system_u:object_r:samba_share_t:s0", "fscontext=system_u:object_r:samba_share_t:s0", "rootcontext=system_u:object_r:samba_share_t:s0", filesystem.name]
     };
 
     FnConsole.log[2]("File Systems, SELinux Contexts, Samba, Set: In Progress, Pool: " + pool.name + ", File System: " + filesystem.name);
@@ -8423,7 +8423,7 @@ function FnFileSystemSelinuxContextsSambaSet(pool = { name, id }, filesystem = {
 
 function FnFileSystemShareSmbDisable(pool = { name, id }, filesystem = { name, id }) {
     let process = {
-        command: ["/sbin/zfs", "set", "sharesmb=off", filesystem.name]
+        command: ["zfs", "set", "sharesmb=off", filesystem.name]
     };
 
     FnConsole.log[2]("File Systems, Share SMB, Disable: In Progress, Pool: " + pool.name + ", File System: " + filesystem.name);
@@ -8444,7 +8444,7 @@ function FnFileSystemShareSmbDisable(pool = { name, id }, filesystem = { name, i
 
 function FnFileSystemShareSmbEnable(pool = { name, id }, filesystem = { name, id }) {
     let process = {
-        command: ["/sbin/zfs", "set", "sharesmb=on", filesystem.name]
+        command: ["zfs", "set", "sharesmb=on", filesystem.name]
     };
 
     FnConsole.log[2]("File Systems, Share SMB, Enable: In Progress, Pool: " + pool.name + ", File System: " + filesystem.name);
@@ -8465,7 +8465,7 @@ function FnFileSystemShareSmbEnable(pool = { name, id }, filesystem = { name, id
 
 function FnFileSystemShareSmbInheritedDisable(pool = { name, id, altroot: false }, filesystem = { name }, force = { disable: false }) {
     let process = {
-        command: ["/sbin/zfs", "get", "-H", "name,sharesmb", "-o", "property,value,source", "-r", "-t", "filesystem"],
+        command: ["zfs", "get", "-H", "name,sharesmb", "-o", "property,value,source", "-r", "-t", "filesystem"],
         promise: cockpit.defer()
     };
 
@@ -8570,7 +8570,7 @@ function FnFileSystemUnlock(pool = { name, id, altroot: false, readonly: false }
         filesystem.passphrase = filesystem.passphrase.replace(/\'/g, "\'\"\'\"\'");
     }
 
-    process.command = ["/bin/sh", "-c", "printf '" + filesystem.passphrase + "' | /sbin/zfs load-key \"" + filesystem.name + "\""];
+    process.command = ["/bin/sh", "-c", "printf '" + filesystem.passphrase + "' | zfs load-key \"" + filesystem.name + "\""];
 
     FnConsole.log[2]("File Systems, Unlock: In Progress, Pool: " + pool.name + ", File System: " + filesystem.name);
     FnConsole.log[3](FnConsoleCommand({ command: process.command }));
@@ -8793,7 +8793,7 @@ function FnFileSystemUnmount(pool = { name, id, altroot: false, readonly: false 
 
 function FnFileSystemUnmountCommand(pool = { name, id }, filesystem = { name, id, force: false, lock: false }, display = { refresh: true }) {
     let process = {
-        command: ["/sbin/zfs", "unmount", filesystem.name]
+        command: ["zfs", "unmount", filesystem.name]
     };
 
     if (filesystem.force) {
@@ -8836,7 +8836,7 @@ function FnFileSystemUnmountCommand(pool = { name, id }, filesystem = { name, id
 
 function FnSnapshotsGet(pool = { name, id }) {
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "name,creation,used,refer,encryption,encryptionroot,keystatus,clones", "-r", "-p", "-t", "snapshot", pool.name]
+        command: ["zfs", "list", "-H", "-o", "name,creation,used,refer,encryption,encryptionroot,keystatus,clones", "-r", "-p", "-t", "snapshot", pool.name]
     };
     let snapshots = {
         empty: true
@@ -9145,7 +9145,7 @@ function FnSnapshotsGetCommand(pool = { name, id, altroot: false, readonly: fals
 
 function FnSnapshotChildFileSystemsGet(pool = { name, id }, snapshot = { name, id }, filesystems = { id: [] }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "name", "-r", "-t", "filesystem"]
+        command: ["zfs", "list", "-H", "-o", "name", "-r", "-t", "filesystem"]
     };
 
     filesystems.id.forEach(_value => _value && process.command.push(_value));
@@ -9185,7 +9185,7 @@ function FnSnapshotChildFileSystemsGet(pool = { name, id }, snapshot = { name, i
 
 function FnSnapshotChildSnapshotsGet(pool = { name, id }, snapshot = { name, id, exclude: false }, filesystems = { id: [] }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "name", "-r", "-t", "snapshot"]
+        command: ["zfs", "list", "-H", "-o", "name", "-r", "-t", "snapshot"]
     };
 
     if (!snapshot.exclude) {
@@ -9250,7 +9250,7 @@ function FnSnapshotChildSnapshotsGet(pool = { name, id }, snapshot = { name, id,
 
 function FnSnapshotClone(pool = { name, id, altroot: false }, snapshot = { name, id, clone: { name, createnonexistparents: false, parent } }) {
     let process = {
-        command: ["/sbin/zfs", "clone", "-o", "sharenfs=off", "-o", "sharesmb=off", snapshot.name, snapshot.clone.name]
+        command: ["zfs", "clone", "-o", "sharenfs=off", "-o", "sharesmb=off", snapshot.name, snapshot.clone.name]
     };
 
     if (snapshot.clone.createnonexistparents) {
@@ -9347,7 +9347,7 @@ function FnSnapshotCloneFail(pool = { name, id }, snapshot = { name, id }, proce
 
 function FnSnapshotCreate(pool = { name, id }, snapshot = { name, id, recursive: false }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zfs", "snapshot", snapshot.name]
+        command: ["zfs", "snapshot", snapshot.name]
     };
 
     modal.hide = true;
@@ -9531,7 +9531,7 @@ function FnSnapshotDestroy(pool = { name, id, altroot: false, readonly: false },
 
 function FnSnapshotDestroyCommand(pool = { name, id }, snapshot = { name, id, recursive: false, recursiveall: false }, display = { refresh: true }) {
     let process = {
-        command: ["/sbin/zfs", "destroy", snapshot.name]
+        command: ["zfs", "destroy", snapshot.name]
     };
 
     if (snapshot.recursive) {
@@ -9582,7 +9582,7 @@ function FnSnapshotDestroyFail(pool = { name, id }, snapshot = { name, id }, pro
 
 function FnSnapshotRename(pool = { name, id }, snapshot = { name, id, namenew, recursive: false }) {
     let process = {
-        command: ["/sbin/zfs", "rename", snapshot.name, snapshot.namenew]
+        command: ["zfs", "rename", snapshot.name, snapshot.namenew]
     };
     let modal = {
         hide: true
@@ -9802,7 +9802,7 @@ function FnSnapshotRollBack(pool = { name, id, altroot: false, readonly: false }
 
 function FnSnapshotRollBackCommand(pool = { name, id }, snapshot = { name, id, force: false, recursive: false, recursiveall: false }, display = { refresh: true }) {
     let process = {
-        command: ["/sbin/zfs", "rollback", snapshot.name]
+        command: ["zfs", "rollback", snapshot.name]
     };
 
     if (snapshot.force) {
@@ -9856,7 +9856,7 @@ function FnSnapshotRollBackCommandFail(pool = { name, id }, snapshot = { name, i
 
 function FnSnapshotRollBackSnapshotsGet(pool = { name, id }, snapshot = { name, id, creation }, modal = { name, id }) {
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "name,creation,clones", "-p", "-t", "snapshot"]
+        command: ["zfs", "list", "-H", "-o", "name,creation,clones", "-p", "-t", "snapshot"]
     };
 
     process.command.push(snapshot.name.replace(/^(.*)\@.*$/, "$1"));
@@ -9940,7 +9940,7 @@ function FnStatusErrorColors(status = { count }) {
 
 function FnStatusGet(pool = { name, id }) {
     let process = {
-        command: ["/bin/sh", "-c", ((zfsmanager.user.name == "root" || !zfsmanager.user.name) ? "ZPOOL_SCRIPTS_AS_ROOT=1 " : "") + `/sbin/zpool status -p -t -c upath "` + pool.name + `"`]
+        command: ["/bin/sh", "-c", ((zfsmanager.user.name == "root" || !zfsmanager.user.name) ? "ZPOOL_SCRIPTS_AS_ROOT=1 " : "") + `zpool status -p -t -c upath "` + pool.name + `"`]
     };
 
     pool.autotrim = ($("#tr-storagepool-" + pool.id).attr("data-pool-autotrim") == "true" ? true : false);
@@ -10816,7 +10816,7 @@ function FnSystemHostIdSet(system = { hostid }) {
 
 function FnSystemNfsVersionGet(modal = { alert: { id } }) {
     let process = {
-        command: ["/usr/sbin/nfsstat", "--version"]
+        command: ["nfsstat", "--version"]
     };
 
     FnConsole.log[2]("System, NFS, Version, Get: In Progress");
@@ -11397,7 +11397,7 @@ function FnDisksLsblkGet(disks = { sizeraw: true }) {
 
 function FnDisksStoragePoolsAttachedGet(pool = { name, id }, disks = { id: { blockdevice: true } }) {
     let process = {
-        command: ["/bin/sh", "-c", ((zfsmanager.user.name == "root" || !zfsmanager.user.name) ? "ZPOOL_SCRIPTS_AS_ROOT=1 " : "") + "/sbin/zpool status -P " + (disks.id.blockdevice ? "-L " : "") + "-c upath" + (pool.name ? ` "` + pool.name + `"` : "")]
+        command: ["/bin/sh", "-c", ((zfsmanager.user.name == "root" || !zfsmanager.user.name) ? "ZPOOL_SCRIPTS_AS_ROOT=1 " : "") + "zpool status -P " + (disks.id.blockdevice ? "-L " : "") + "-c upath" + (pool.name ? ` "` + pool.name + `"` : "")]
     };
 
     FnConsole.log[2]("Disks, Storage Pools, Attached, Get: In Progress");
@@ -11414,7 +11414,7 @@ function FnDisksStoragePoolsAttachedGet(pool = { name, id }, disks = { id: { blo
 
 function FnDisksStoragePoolsImportableAttachedGet() {
     let process = {
-        command: ["/sbin/zpool", "import", "-d", "/dev"]
+        command: ["zpool", "import", "-d", "/dev"]
     };
 
     FnConsole.log[2]("Disks, Storage Pools, Importable, Attached, Get: In Progress");
@@ -11824,7 +11824,7 @@ function FnSambaShareEnableCommandFinally(pool = { name, id }, filesystem = { na
 
 function FnSambaShareEnableMountpointGet(pool = { name, id, altroot: false, readonly: false }, filesystem = { name, id, sharesmb: false }, display = { silent: false }) {
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "mounted,mountpoint", "-t", "filesystem", filesystem.name]
+        command: ["zfs", "list", "-H", "-o", "mounted,mountpoint", "-t", "filesystem", filesystem.name]
     };
 
     FnConsole.log[2]("File Systems, Mountpoint, Get: In Progress, Pool: " + pool.name + ", File System: " + filesystem.name);
@@ -11989,7 +11989,7 @@ function FnSambaSharesDestroyAll(samba = { restart: false }, display = { silent:
 
 function FnSambaSharesEnable(pool = { name, id, altroot: false, readonly: false }, filesystem = { name, force: false }, samba = { restart: false }, display = { refresh: false, silent: true }) {
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "name,mounted,mountpoint,sharesmb", "-r", "-t", "filesystem"],
+        command: ["zfs", "list", "-H", "-o", "name,mounted,mountpoint,sharesmb", "-r", "-t", "filesystem"],
         promise: cockpit.defer()
     };
 
@@ -12105,7 +12105,7 @@ function FnSambaSharesEnable(pool = { name, id, altroot: false, readonly: false 
 
 function FnSambaSharesEnableAll(samba = { restart: false }, display = { silent: false }, modal = { name }) {
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "name,mounted,mountpoint,sharesmb", "-r", "-t", "filesystem"],
+        command: ["zfs", "list", "-H", "-o", "name,mounted,mountpoint,sharesmb", "-r", "-t", "filesystem"],
         promise: cockpit.defer()
     };
 
@@ -12230,7 +12230,7 @@ function FnSambaSharesEnableAll(samba = { restart: false }, display = { silent: 
 
 function FnSambaSharesGet(pool = { name, id }, filesystem = { name, clones: [] }) {
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "name,mounted,mountpoint,sharesmb", "-r", "-t", "filesystem"]
+        command: ["zfs", "list", "-H", "-o", "name,mounted,mountpoint,sharesmb", "-r", "-t", "filesystem"]
     };
 
     if (filesystem.name) {
@@ -12407,7 +12407,7 @@ function FnSambaUsersharesDirectoryCreate() {
 
 function FnSambaVersionGet() {
     let process = {
-        command: ["/usr/sbin/smbd", "-V"]
+        command: ["smbd", "-V"]
     };
     let samba = {
         message: ""
@@ -12787,7 +12787,7 @@ function FnSambaZfsShareConfigurationPathSetCommand(pool = { name, id }, filesys
 
 function FnSambaZfsShareConfigurationPathsSet(pool = { name, id, altroot: false }, filesystem = { name }, samba = { restart: false }, display = { refresh: false, silent: true }) {
     let process = {
-        command: ["/sbin/zfs", "list", "-H", "-o", "name,mounted,mountpoint,sharesmb", "-r", "-t", "filesystem", filesystem.name],
+        command: ["zfs", "list", "-H", "-o", "name,mounted,mountpoint,sharesmb", "-r", "-t", "filesystem", filesystem.name],
         promise: cockpit.defer()
     };
 
